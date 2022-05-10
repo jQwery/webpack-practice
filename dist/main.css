@@ -386,3 +386,29 @@ h1{
 .code{
     color: crimson;
 }
+/*!*************************************************************************************************************!*\
+  !*** css ../node_modules/css-loader/dist/cjs.js!../node_modules/less-loader/dist/cjs.js!./styles/less.less ***!
+  \*************************************************************************************************************/
+.box {
+  padding: 1rem;
+  border-radius: 5px;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+}
+.box h2 {
+  text-align: center;
+  color: darkblue;
+}
+
+/*!*************************************************************************************************************!*\
+  !*** css ../node_modules/css-loader/dist/cjs.js!../node_modules/sass-loader/dist/cjs.js!./styles/sass.scss ***!
+  \*************************************************************************************************************/
+.card {
+  padding: 1rem;
+  border-radius: 5px;
+  margin-top: 1rem;
+  border: 1px solid #ccc; }
+  .card h2 {
+    text-align: center;
+    color: darkred; }
+

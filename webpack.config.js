@@ -7,7 +7,6 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
-console.log(isDev)
 
 //оптимизация сборки, в случае если режим продакшна, тогда все файлы минифицируются
 const optimization = () =>{
@@ -25,6 +24,36 @@ const optimization = () =>{
     }
     return config
 }
+//функция для введения различий между именами файлов для разработки и для продакшна
+const fileName = (ext) => isDev? `[name].${ext}` : `[name].[hash].${ext}`
+
+//оптимизация для загрузчиков стилей
+const cssLoaders = additionLoader => {
+    const loaders = [{
+        loader: MiniCssExtractPlugin.loader,
+        options: {
+        }
+    } ,'css-loader']
+
+    if(additionLoader){
+        loaders.push(additionLoader)
+    }
+
+    return loaders
+}
+
+const babelOptions = (additionalPreset) => {
+    const opts = {
+        presets: [
+            '@babel/preset-env'
+        ]
+    }
+
+    if(additionalPreset){
+        opts.presets.push(additionalPreset)
+    }
+    return opts
+}
 
 module.exports = {
     //место откуда берутся все файлы для сборки
@@ -33,12 +62,12 @@ module.exports = {
     mode: 'development',
     //точки входа в проект, куда импортируются все остальные файлы
     entry: {
-        main: './index.js',
-        analytics: './analytics.js'
+        main:['@babel/polyfill', './index.jsx'],
+        analytics: './analytics.ts'
     },
     //файлы куда собирается проект
     output: {
-        filename: '[name].[contenthash].js',
+        filename: fileName('js'),
         path: path.resolve(__dirname, 'dist')
     },
     //расширения по умолчанию, чтобы их не указывать при импортах
@@ -81,7 +110,7 @@ module.exports = {
           }),
           //собирает все файлы css в один бандл
         new MiniCssExtractPlugin({
-            filename: '[name].[contenthash].css'
+            filename: fileName('css')
         })
     ],
     module: {
@@ -89,11 +118,15 @@ module.exports = {
         rules: [
             {
                 test: /\.css$/,
-                use: [{
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                    }
-                } ,'css-loader']
+                use:cssLoaders()
+            },
+            {
+                test: /\.less$/,
+                use: cssLoaders('less-loader')
+            },
+            {
+                test: /\.s[ac]ss$/,
+                use: cssLoaders('sass-loader')
             },
             {
                 test: /\.(png|jpg|svg|gif)$/,
@@ -110,7 +143,31 @@ module.exports = {
             {
                 test: /\.csv$/,
                 use: ['csv-loader']
-            }
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: babelOptions()
+                } 
+            },
+            {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: babelOptions('@babel/preset-typescript')
+                } 
+            },
+            {
+                test: /\.jsx$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: babelOptions('@babel/preset-react')
+                } 
+            },
         ]
     }
 }
