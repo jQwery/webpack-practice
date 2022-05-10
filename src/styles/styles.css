@@ -1,4 +1,5 @@
 @import "roboto.css";
+@import "~normalize.css";
 
 body{
     font-family: 'Roboto', sans-serif;
@@ -6,8 +7,8 @@ body{
 
 .container{
     padding-top: 2rem;
-    min-width: 1000px;
-    margin: 0;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 h1{
@@ -20,4 +21,8 @@ h1{
     height: 200px;
     width: 200px;
     margin: 0 auto;
+}
+
+.code{
+    color: crimson;
 }
